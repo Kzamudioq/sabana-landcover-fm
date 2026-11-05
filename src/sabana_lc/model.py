@@ -80,15 +80,15 @@ def make_datamodule(chip_root: str | Path, cfg: TrainConfig):
     class DM(pl.LightningDataModule):
         def setup(self, stage=None):
             root = Path(chip_root)
-            self.train_ds = ChipDataset(root / "train", cfg.mean, cfg.std, augment=True)
-            self.val_ds = ChipDataset(root / "val", cfg.mean, cfg.std)
+            self.train_dataset = ChipDataset(root / "train", cfg.mean, cfg.std, augment=True)
+            self.val_dataset = ChipDataset(root / "val", cfg.mean, cfg.std)
 
         def train_dataloader(self):
-            return DataLoader(self.train_ds, cfg.batch_size, shuffle=True, num_workers=cfg.num_workers,
-                              drop_last=len(self.train_ds) > cfg.batch_size)
+            return DataLoader(self.train_dataset, cfg.batch_size, shuffle=True, num_workers=cfg.num_workers,
+                              drop_last=len(self.train_dataset) > cfg.batch_size)
 
         def val_dataloader(self):
-            return DataLoader(self.val_ds, cfg.batch_size, num_workers=cfg.num_workers)
+            return DataLoader(self.val_dataset, cfg.batch_size, num_workers=cfg.num_workers)
 
     return DM()
 
