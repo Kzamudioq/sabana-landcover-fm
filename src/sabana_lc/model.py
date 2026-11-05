@@ -122,6 +122,7 @@ def build_task(cfg: TrainConfig):
         scheduler_hparams={"T_max": cfg.epochs},
         freeze_backbone=cfg.freeze_backbone,
         class_names=[str(i) for i in range(N_CLASSES)],
+        plot_on_val=False,  # sin figuras de validación: el DataModule no define plot()
     )
 
 
