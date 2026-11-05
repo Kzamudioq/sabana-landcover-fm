@@ -1,0 +1,66 @@
+# sabana-landcover-fm
+
+**Does a geospatial foundation model map land cover better than the classic methods, in a real Andean landscape?**
+This repo fine-tunes **Prithvi-EO-2.0** (NASA/IBM, 300 M parameters) on Sentinel-2 imagery of the Sabana de Bogotá. It compares the result with three other maps built on the same pixels:
+
+| Method | What it is |
+|---|---|
+| **K-Means** | the unsupervised approach of my first Cerros Orientales analysis, rebuilt so that clusters mean the same thing everywhere |
+| **Random Forest** | the classic supervised pixel classifier (6 bands + NDVI, NDWI, NDBI) |
+| **Dynamic World** | Google's near-real-time global product, used as is |
+| **Prithvi-EO-2.0 + UNet** | the foundation model, fine-tuned on WorldCover 2021 labels |
+
+All four maps are judged against **490 photo-interpreted reference points** in held-out spatial blocks. Each map gets overall accuracy, F1 and IoU per class with confidence intervals, plus area estimates in hectares, following remote-sensing good practice (Olofsson et al. 2014; Stehman 2014).
+
+> **Status:** pipeline complete and tested end to end on synthetic data. **Real-data results are pending** the GEE export, the Colab training run and the point labelling. The results table below stays empty until those are done.
+
+## Results
+
+_Pending. Filled automatically by `python -m sabana_lc evaluate` (`work/results/results.md`)._
+
+| Map | Overall accuracy ± 95% CI | Macro F1 | mIoU |
+|---|---|---|---|
+| K-Means | – | – | – |
+| Random Forest | – | – | – |
+| Dynamic World | – | – | – |
+| Prithvi-EO-2.0 | – | – | – |
+
+## Why the evaluation is built this way
+
+- **Spatial split.** Train, validation and test sets are 5 km blocks, and a chip is kept only if all of it lies in one split. Random pixel splits leak neighbouring pixels between train and test and inflate every score.
+- **Independent reference.** The model learns from WorldCover, so measuring it against WorldCover would reward copying WorldCover's mistakes. The reference points are labelled blind on 2021–2022 high-resolution imagery ([protocol, in Spanish](docs/protocolo_verificacion.md)). Agreement with WorldCover is still reported, but separately.
+- **Unbiased estimators.** The sample is stratified by WorldCover class, which is not the class set of any map under test. `evaluate.py` implements Stehman's (2014) estimators for that case. A test checks that they reduce exactly to Olofsson et al. (2014) when strata equal map classes, and a 300-run simulation checks that the 95% intervals cover the truth about 95% of the time.
+- **A fair K-Means.** The original analysis fitted K-Means separately for each year, so "class 6" in 2020 and "class 6" in 2024 were different things, and areas seemed to jump by thousands of hectares between years. Here one model is fitted once, and each cluster is named after the class it overlaps most.
+
+## Pipeline
+
+```
+gee/01_export_dataset.js     Sentinel-2 2021 median (Cloud Score+), WorldCover + Dynamic World labels,
+                             5 km split blocks, stratified reference points  ->  Google Drive
+python -m sabana_lc prepare  224 px chips per split, band statistics, class weights
+python -m sabana_lc baselines K-Means and Random Forest maps
+python -m sabana_lc train    Prithvi-EO-2.0 encoder + UNet decoder (TerraTorch), best checkpoint by val mIoU
+python -m sabana_lc predict  sliding-window map of the whole Sabana (tapered overlaps, no seams)
+python -m sabana_lc evaluate accuracy, F1, IoU, areas with 95% CI, figures
+```
+
+The GPU steps run in [`notebooks/train_colab.ipynb`](notebooks/train_colab.ipynb) on a free Colab T4. Everything else runs on a laptop.
+
+Classes: water · trees · shrubland · grass/herbaceous · cropland · built-up (greenhouses included) · bare.
+
+## Run the tests
+
+```bash
+pip install -e ".[model,test]"
+pytest            # 6 tests, ~40 s on CPU: estimators + full pipeline on a synthetic scene with a 3.5 M "tiny" Prithvi
+```
+
+## Data and licences
+
+Sentinel-2 (Copernicus), ESA WorldCover v200 (CC BY 4.0), Dynamic World (CC BY 4.0) and Prithvi-EO-2.0 (Apache 2.0) are open. No institutional data is used.
+
+## Resumen en español
+
+Este proyecto compara cuatro formas de mapear coberturas en la Sabana de Bogotá con Sentinel-2: K-Means, Random Forest, Dynamic World y el modelo fundacional Prithvi-EO-2.0 ajustado. Todas se evalúan contra 490 puntos verificados a mano en bloques que ningún modelo vio. Las métricas incluyen intervalos de confianza y áreas en ha + m², con los estimadores de Stehman (2014). El código está probado de punta a punta con datos sintéticos. Faltan la exportación de Earth Engine, el entrenamiento en Colab y el etiquetado de los puntos.
+
+<sub>© 2026 Karen Tatiana Zamudio Quintero. All rights reserved. See [LICENSE](LICENSE).</sub>

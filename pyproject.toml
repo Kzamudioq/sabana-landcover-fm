@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sabana-lc"
+version = "0.1.0"
+description = "Land-cover mapping of the Sabana de Bogotá: Prithvi-EO-2.0 fine-tuning vs K-Means, Random Forest and Dynamic World, judged against photo-interpreted reference points"
+requires-python = ">=3.10"
+dependencies = ["numpy", "pandas", "rasterio", "pyproj", "scikit-learn", "matplotlib", "joblib"]
+
+[project.optional-dependencies]
+model = ["torch>=2.2", "terratorch>=1.2"]
+test = ["pytest", "scipy"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "tests"]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]
