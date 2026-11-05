@@ -10,7 +10,7 @@ jobs:
           python-version: "3.11"
       - name: Install (CPU torch)
         run: |
-          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
           pip install -e ".[model,test]"
       - name: Tests (estimators + full pipeline on a synthetic scene)
         run: pytest -q
