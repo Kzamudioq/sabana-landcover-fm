@@ -14,6 +14,16 @@ All four maps are judged against **490 photo-interpreted reference points** in h
 
 > **Status:** the Earth Engine export, the K-Means and Random Forest baselines and the Prithvi-EO-2.0 fine-tuning (40 epochs on a T4) are done, and the full Prithvi map is below. **Accuracy results are pending the labelling of the 490 reference points.** The results table stays empty until then.
 
+## Reference image: Sentinel-2, 2021
+
+<p align="center"><img src="docs/img/sentinel2_2021.png" width="900" alt="Sentinel-2 2021 median composite of the Sabana de Bogotá in natural colour and in false colour B8A-B11-B4"></p>
+
+This is the input every map is built from: the 2021 Sentinel-2 L2A median, with clouds masked by Cloud Score+, 10 m, in the six bands that Prithvi-EO-2.0 expects (B2, B3, B4, B8A, B11, B12).
+- **Natural colour (left):** Bogotá is the light grey area, the Cerros Orientales are the dark band to the east, and the white rectangles to the north-west are flower greenhouses.
+- **False colour B8A-B11-B4 (right):** this is the combination the labelling protocol uses. Vegetation shows in orange, built-up and greenhouses in blue, and water almost black. Crops and pastures, which look alike in natural colour, separate here by tone.
+
+The full composite weighs 328 MB, more than GitHub allows, so it is not in the repository. [`gee/01_export_dataset.js`](gee/01_export_dataset.js) regenerates it exactly. The repository has a light copy in natural colour (8 bits, 20 m) for viewing in QGIS: [`resultados/s2_2021_color_natural_20m.tif`](resultados/s2_2021_color_natural_20m.tif). The figure is drawn by [`scripts/mapa_sentinel.py`](scripts/mapa_sentinel.py).
+
 ## Prithvi-EO-2.0 map of the Sabana, 2021
 
 <p align="center"><img src="docs/img/prithvi_2021.png" width="760" alt="Land-cover map of the Sabana de Bogotá in 2021 by the fine-tuned Prithvi-EO-2.0 model: built-up Bogotá in red, the Cerros Orientales forest in dark green, crops in the western flat land, reservoirs in blue"></p>

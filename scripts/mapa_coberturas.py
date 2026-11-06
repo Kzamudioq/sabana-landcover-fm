@@ -33,7 +33,7 @@ def escala(ax, x0, y0, largo, alto, tramos=4):
     paso = largo / tramos
     for i in range(tramos):
         ax.add_patch(Rectangle((x0 + i * paso, y0), paso, alto, facecolor=TINTA if i % 2 == 0 else "white",
-                               edgecolor=TINTA, linewidth=0.8, zorder=6))
+                               edgecolor="white", linewidth=1.0, zorder=6))  # borde blanco: se ve sobre fondos oscuros
     for i in (0, tramos // 2, tramos):
         ax.text(x0 + i * paso, y0 + alto * 1.5, f"{i * paso / 1000:.0f}" + (" km" if i == tramos else ""),
                 ha="center", va="bottom", fontsize=8, color=TINTA, zorder=6, path_effects=HALO)
