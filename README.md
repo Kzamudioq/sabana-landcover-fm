@@ -1,5 +1,10 @@
 # sabana-landcover-fm
 
+<p align="center">
+  <img src="docs/img/portada.jpg" alt="Sabana de Bogotá: Sentinel-2 2021 image on the left, Prithvi-EO-2.0 land-cover map on the right" width="100%">
+</p>
+<p align="center"><sub>Same 42 × 18 km strip of the Sabana de Bogotá (Funza, Mosquera, El Dorado airport, western Bogotá and the Cerros Orientales): Sentinel-2 2021 input on the left, Prithvi-EO-2.0 output on the right. Red: built-up · dark green: trees · yellow: pasture · blue: water.</sub></p>
+
 **Does a geospatial foundation model map land cover better than the classic methods, in a real Andean landscape?**
 This repo fine-tunes **Prithvi-EO-2.0** (NASA/IBM, 300 M parameters) on Sentinel-2 imagery of the Sabana de Bogotá. It compares the result with three other maps built on the same pixels:
 
