@@ -12,7 +12,22 @@ This repo fine-tunes **Prithvi-EO-2.0** (NASA/IBM, 300 M parameters) on Sentinel
 
 All four maps are judged against **490 photo-interpreted reference points** in held-out spatial blocks. Each map gets overall accuracy, F1 and IoU per class with confidence intervals, plus area estimates in hectares, following remote-sensing good practice (Olofsson et al. 2014; Stehman 2014).
 
-> **Status:** pipeline complete and tested end to end on synthetic data. **Real-data results are pending** the GEE export, the Colab training run and the point labelling. The results table below stays empty until those are done.
+> **Status:** the Earth Engine export, the K-Means and Random Forest baselines and the Prithvi-EO-2.0 fine-tuning (40 epochs on a T4) are done, and the full Prithvi map is below. **Accuracy results are pending the labelling of the 490 reference points.** The results table stays empty until then.
+
+## Prithvi-EO-2.0 map of the Sabana, 2021
+
+<p align="center"><img src="docs/img/prithvi_2021.png" width="760" alt="Land-cover map of the Sabana de Bogotá in 2021 by the fine-tuned Prithvi-EO-2.0 model: built-up Bogotá in red, the Cerros Orientales forest in dark green, crops in the western flat land, reservoirs in blue"></p>
+
+The map reproduces the structure of the Sabana:
+- **Built-up:** the urban footprint of Bogotá, with the El Dorado runways and the towns along the main roads (Chía, Cajicá, Funza, Mosquera, Madrid).
+- **Trees:** the forest of the Cerros Orientales as one continuous band, plus the Suba and western hills.
+- **Water:** the San Rafael and Muña reservoirs and the meanders of the Bogotá River.
+- **Crops:** the flat land to the west.
+- **Shrubland:** almost only toward the páramo in the south-east.
+
+The areas in the legend are **pixel counts of the map**, not estimates. The final areas, with confidence intervals, come from the reference points (Stehman 2014) and will replace them. Shrubland is probably under-mapped: it is the class with the fewest training pixels (0.5 % of the training set).
+
+The classified raster is in [`resultados/prithvi_2021.tif`](resultados/prithvi_2021.tif) (EPSG:32618, 10 m, values 0–6, 255 = no data). The figure is drawn by [`scripts/mapa_coberturas.py`](scripts/mapa_coberturas.py).
 
 ## Results
 
@@ -61,6 +76,6 @@ Sentinel-2 (Copernicus), ESA WorldCover v200 (CC BY 4.0), Dynamic World (CC BY 4
 
 ## Resumen en español
 
-Este proyecto compara cuatro formas de mapear coberturas en la Sabana de Bogotá con Sentinel-2: K-Means, Random Forest, Dynamic World y el modelo fundacional Prithvi-EO-2.0 ajustado. Todas se evalúan contra 490 puntos verificados a mano en bloques que ningún modelo vio. Las métricas incluyen intervalos de confianza y áreas en ha + m², con los estimadores de Stehman (2014). El código está probado de punta a punta con datos sintéticos. Faltan la exportación de Earth Engine, el entrenamiento en Colab y el etiquetado de los puntos.
+Este proyecto compara cuatro formas de mapear coberturas en la Sabana de Bogotá con Sentinel-2: K-Means, Random Forest, Dynamic World y el modelo fundacional Prithvi-EO-2.0 ajustado. Todas se evalúan contra 490 puntos verificados a mano en bloques que ningún modelo vio. Las métricas incluyen intervalos de confianza y áreas en ha + m², con los estimadores de Stehman (2014). El código está probado de punta a punta con datos sintéticos. Ya están la exportación de Earth Engine, las líneas base y el modelo Prithvi ajustado, con su mapa de 2021. Falta el etiquetado de los puntos de referencia para calcular la exactitud.
 
 <sub>© 2026 Karen Tatiana Zamudio Quintero. All rights reserved. See [LICENSE](LICENSE).</sub>
